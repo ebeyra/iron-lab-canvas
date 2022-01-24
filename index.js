@@ -35,7 +35,7 @@ let player = new Player();
 
 // Creating the object box
 
-class Obstacle {
+class Treasure {
   constructor() {
     this.x = Math.round(Math.random() * canvas.width - this.w);
     this.y = Math.round(Math.random() * canvas.height - this.w);
@@ -45,11 +45,12 @@ class Obstacle {
   }
 }
 
-let object = new Obstacle();
+let treasure = [];
 
-function spawnObstacle() {
-  ctx.fillStyle = object.color
-  ctx.fillRect = (object.x, object.y, object.w, object.h)
+function spawnTreasure() {
+  treasure.push(new Treasure());
+  ctx.fillStyle = treasure.color;
+  ctx.fillRect(treasure.x, treasure.y, treasure.w, treasure.h);
 }
 
 // Bringing over event listener
@@ -76,7 +77,8 @@ document.addEventListener("keydown", function (event) {
 // timer--;
 // }, 1000);
 // clearInterval(myInterval);
-let timer = 30;
+let timer = 5;
+let interval;
 
 // Detect collision formula
 function detectCollision(player, obj) {
@@ -86,6 +88,7 @@ function detectCollision(player, obj) {
     player.y < obj.y + obj.h &&
     player.y + player.h > obj.y
   ) {
+    spawnTreasure();
     return true;
   } else {
     return false;
@@ -109,15 +112,15 @@ function startScreen() {
   document.addEventListener("click", startGame);
 }
 
-// startScreen();
-
 function startGame() {
-  setInterval(function () {
+  interval = setInterval(function () {
     timer--;
   }, 1000);
   document.removeEventListener("click", startGame);
+  animate();
 }
 function gameOver() {
+  window.cancelAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "green";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -129,15 +132,21 @@ function gameOver() {
 }
 
 function animate() {
-  window.requestAnimationFrame(animate)
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  detectCollision(player, treasure);
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.w, player.h);
-  spawnObstacle()
-  ctx.fillStyle = "black"
-  ctx.font = "20px Arial"
-  ctx.textAlign = "right"
-  ctx.fillText("text",x,y)
-  ctx.fillText("text",x,y)
-  
+  spawnTreasure();
+  ctx.fillStyle = "black";
+  ctx.font = "20px Arial";
+  ctx.textAlign = "right";
+  ctx.fillText(`Timer: ${timer}`, canvas.width - 20, 30);
+  ctx.fillText(`Score: `, canvas.width - 20, 50);
+  if (timer <= 0) {
+    gameOver();
+  } else {
+    window.requestAnimationFrame(animate);
+  }
 }
+
+startScreen();
