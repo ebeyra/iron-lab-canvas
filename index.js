@@ -19,16 +19,16 @@ class Player {
   move(direction) {
     switch (direction) {
       case "ArrowUp":
-        this.y -= 25;
+        this.y -= 30;
         break;
       case "ArrowDown":
-        this.y += 25;
+        this.y += 30;
         break;
       case "ArrowLeft":
-        this.x -= 25;
+        this.x -= 30;
         break;
       case "ArrowRight":
-        this.x += 25;
+        this.x += 30;
         break;
     }
   }
@@ -54,6 +54,21 @@ function spawnTreasure() {
   treasure = new Treasure();
 }
 
+class Bonus {
+  constructor() {
+    this.x = Math.round(Math.random() * (canvas.width - 50));
+    this.y = -25;
+    this.w = 15;
+    this.h = 15;
+    this.color = "yellow";
+  }
+  moveDown() {
+    this.y = this.y + 1.5;
+  }
+}
+
+let bonus = [];
+
 // Re-using event listener for movement
 
 document.addEventListener("keydown", function (event) {
@@ -73,10 +88,11 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-// Timer and score for the game
+// Timer, score, and bonuses for the game
 let timer = 30;
 let interval;
 let score = 0;
+let bonusInterval;
 
 // Detect collision formula - modified to move the treasure
 
@@ -116,6 +132,9 @@ function startGame() {
   interval = setInterval(function () {
     timer--;
   }, 1000);
+  bonusInterval = setInterval(function () {
+    bonus.push(new Bonus());
+  }, 20000);
   document.removeEventListener("click", startGame);
   animate();
 }
@@ -139,12 +158,44 @@ function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = grd;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Boundaries
+  if (player.y + player.w > canvas.height) {
+    player.y = canvas.height - player.w;
+  }
+  if (player.y < 0) {
+    player.y = 0;
+  }
+  if (player.x + player.w > canvas.width) {
+    player.x = canvas.width - player.w;
+  }
+  if (player.x < 0) {
+    player.x = 0;
+  }
+  // End boundaries
+
+  // Bonus item interval
+  for (let i = 0; i < bonus.length; i++) {
+    ctx.fillStyle = bonus[i].color;
+    bonus[i].moveDown();
+    ctx.fillRect(bonus[i].x, bonus[i].y, bonus[i].w, bonus[i].h);
+    if (
+      player.x < bonus[i].x + bonus[i].w &&
+      player.x + player.w > bonus[i].x &&
+      player.y < bonus[i].y + bonus[i].h &&
+      player.y + player.h > bonus[i].y
+    ) {
+      timer += 5;
+      bonus.splice(bonus[i]);
+    }
+  }
+  // Bonus item interval end
+
   detectCollision(player, treasure);
   ctx.fillStyle = player.color;
   ctx.fillRect(player.x, player.y, player.w, player.w);
   ctx.fillStyle = treasure.color;
   ctx.fillRect(treasure.x, treasure.y, treasure.w, treasure.w);
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.font = "20px Arial";
   ctx.textAlign = "right";
   ctx.fillText(`Timer: ${timer}`, canvas.width - 20, 30);
