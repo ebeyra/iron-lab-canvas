@@ -2,30 +2,33 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = 600;
 canvas.height = 600;
+let grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
+grd.addColorStop(0, "#bdc3c7");
+grd.addColorStop(1, "#2c3e50");
 
-// Creating the player cube
+// Creating the player box
 
 class Player {
   constructor() {
-    this.x = 50;
-    this.y = 100;
-    this.w = 50;
-    this.y = 50;
-    this.color = "blue";
+    this.x = canvas.width / 2 - 20;
+    this.y = canvas.height / 2 - 20;
+    this.w = 20;
+    this.h = 20;
+    this.color = "white";
   }
   move(direction) {
     switch (direction) {
       case "ArrowUp":
-        this.y -= 15;
+        this.y -= 25;
         break;
       case "ArrowDown":
-        this.y += 15;
+        this.y += 25;
         break;
       case "ArrowLeft":
-        this.x -= 15;
+        this.x -= 25;
         break;
       case "ArrowRight":
-        this.x += 15;
+        this.x += 25;
         break;
     }
   }
@@ -33,27 +36,25 @@ class Player {
 
 let player = new Player();
 
-// Creating the object box
+// Creating the object box and random location function
 
 class Treasure {
   constructor() {
-    this.x = Math.round(Math.random() * canvas.width - this.w);
-    this.y = Math.round(Math.random() * canvas.height - this.w);
-    this.w = 25;
-    this.h = 25;
+    this.x = Math.round(Math.random() * (canvas.width - 100));
+    this.y = Math.round(Math.random() * (canvas.height - 100));
+    this.w = 15;
+    this.h = 15;
     this.color = "red";
   }
 }
 
-let treasure = [];
+let treasure = new Treasure();
 
 function spawnTreasure() {
-  treasure.push(new Treasure());
-  ctx.fillStyle = treasure.color;
-  ctx.fillRect(treasure.x, treasure.y, treasure.w, treasure.h);
+  treasure = new Treasure();
 }
 
-// Bringing over event listener
+// Re-using event listener for movement
 
 document.addEventListener("keydown", function (event) {
   switch (event.code) {
@@ -72,15 +73,13 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-// Add a timer to end the game -- NOT SURE WHERE TO PUT IT
-// myInterval = setInterval(function() {
-// timer--;
-// }, 1000);
-// clearInterval(myInterval);
-let timer = 5;
+// Timer and score for the game
+let timer = 30;
 let interval;
+let score = 0;
 
-// Detect collision formula
+// Detect collision formula - modified to move the treasure
+
 function detectCollision(player, obj) {
   if (
     player.x < obj.x + obj.w &&
@@ -88,26 +87,27 @@ function detectCollision(player, obj) {
     player.y < obj.y + obj.h &&
     player.y + player.h > obj.y
   ) {
+    score += 1;
     spawnTreasure();
-    return true;
-  } else {
-    return false;
   }
+  // } else {
+  //   return false;
+  // }
 }
 
 // Make a starting screen
 
 function startScreen() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "green";
+  ctx.fillStyle = grd;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.fillText("Canvas Game", canvas.width / 2, canvas.height / 2);
   ctx.font = "20px Arial";
   ctx.textAlign = "center";
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.fillText("Click to play", canvas.width / 2, canvas.height / 2 + 50);
   document.addEventListener("click", startGame);
 }
@@ -122,26 +122,33 @@ function startGame() {
 function gameOver() {
   window.cancelAnimationFrame(animate);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "green";
+  ctx.fillStyle = grd;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "white";
   ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
-  ctx.fillText("Final score: ", canvas.width / 2, canvas.height / 2 + 50);
+  ctx.fillText(
+    `Final Score: ${score}`,
+    canvas.width / 2,
+    canvas.height / 2 + 50
+  );
 }
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   detectCollision(player, treasure);
   ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.w, player.h);
-  spawnTreasure();
+  ctx.fillRect(player.x, player.y, player.w, player.w);
+  ctx.fillStyle = treasure.color;
+  ctx.fillRect(treasure.x, treasure.y, treasure.w, treasure.w);
   ctx.fillStyle = "black";
   ctx.font = "20px Arial";
   ctx.textAlign = "right";
   ctx.fillText(`Timer: ${timer}`, canvas.width - 20, 30);
-  ctx.fillText(`Score: `, canvas.width - 20, 50);
+  ctx.fillText(`Score: ${score}`, canvas.width - 20, 50);
   if (timer <= 0) {
     gameOver();
   } else {
