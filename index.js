@@ -11,24 +11,6 @@ class Player {
     this.y = canvas.height / 2 - 20;
     this.w = 70;
     this.h = 50;
-    this.color = "white";
-    this.speed = 25;
-  }
-  move(direction) {
-    switch (direction) {
-      case "ArrowUp":
-        this.y -= player.speed;
-        break;
-      case "ArrowDown":
-        this.y += player.speed;
-        break;
-      case "ArrowLeft":
-        this.x -= player.speed;
-        break;
-      case "ArrowRight":
-        this.x += player.speed;
-        break;
-    }
   }
 }
 
@@ -75,25 +57,59 @@ let bonus = [];
 let bonusImage = new Image();
 bonusImage.src = "/gold.png";
 
-// Re-using event listener for movement
-// second listener for "key up"
+// Event listeners for smooth movement
+
+let up = false;
+let down = false;
+let left = false;
+let right = false;
 
 document.addEventListener("keydown", function (event) {
-  switch (event.code) {
+  switch (event.key) {
     case "ArrowUp":
-      player.move("ArrowUp");
+      up = true;
       break;
     case "ArrowDown":
-      player.move("ArrowDown");
+      down = true;
       break;
     case "ArrowLeft":
-      player.move("ArrowLeft");
+      left = true;
       break;
     case "ArrowRight":
-      player.move("ArrowRight");
+      right = true;
       break;
   }
 });
+document.addEventListener("keyup", function (event) {
+  switch (event.key) {
+    case "ArrowUp":
+      up = false;
+      break;
+    case "ArrowDown":
+      down = false;
+      break;
+    case "ArrowLeft":
+      left = false;
+      break;
+    case "ArrowRight":
+      right = false;
+      break;
+  }
+});
+function movement() {
+  if (up) {
+    player.y -= 3;
+  }
+  if (down) {
+    player.y += 3;
+  }
+  if (left) {
+    player.x -= 3;
+  }
+  if (right) {
+    player.x += 3;
+  }
+}
 
 // Score, timer, and bonus interval for the game
 
@@ -103,6 +119,7 @@ let score = 0;
 let bonusInterval;
 
 // Detect collision formula - modified to relocate the butterfly
+// Canvas boundary walls function
 
 function detectCollision(player, obj) {
   if (
@@ -117,6 +134,20 @@ function detectCollision(player, obj) {
   // } else {
   //   return false;
   // }
+}
+function boundaries() {
+  if (player.y + player.w > canvas.height) {
+    player.y = canvas.height - player.w;
+  }
+  if (player.y < 0) {
+    player.y = 0;
+  }
+  if (player.x + player.w > canvas.width) {
+    player.x = canvas.width - player.w;
+  }
+  if (player.x < 0) {
+    player.x = 0;
+  }
 }
 
 // Start screen with title and game instructions
@@ -163,20 +194,8 @@ function startGame() {
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // Check for edge boundaries
-  if (player.y + player.w > canvas.height) {
-    player.y = canvas.height - player.w;
-  }
-  if (player.y < 0) {
-    player.y = 0;
-  }
-  if (player.x + player.w > canvas.width) {
-    player.x = canvas.width - player.w;
-  }
-  if (player.x < 0) {
-    player.x = 0;
-  }
+  movement();
+  boundaries();
 
   // Bonus item loop
   for (let i = 0; i < bonus.length; i++) {
