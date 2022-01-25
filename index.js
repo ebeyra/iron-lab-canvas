@@ -1,75 +1,82 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = 600;
+canvas.width = 630;
 canvas.height = 600;
-let grd = ctx.createLinearGradient(0, 0, 0, canvas.height);
-grd.addColorStop(0, "#bdc3c7");
-grd.addColorStop(1, "#2c3e50");
 
-// Creating the player box
+// Player class creation and image assignment
 
 class Player {
   constructor() {
     this.x = canvas.width / 2 - 20;
     this.y = canvas.height / 2 - 20;
-    this.w = 20;
-    this.h = 20;
+    this.w = 70;
+    this.h = 50;
     this.color = "white";
+    this.speed = 25;
   }
   move(direction) {
     switch (direction) {
       case "ArrowUp":
-        this.y -= 30;
+        this.y -= player.speed;
         break;
       case "ArrowDown":
-        this.y += 30;
+        this.y += player.speed;
         break;
       case "ArrowLeft":
-        this.x -= 30;
+        this.x -= player.speed;
         break;
       case "ArrowRight":
-        this.x += 30;
+        this.x += player.speed;
         break;
     }
   }
 }
 
 let player = new Player();
+let playerImage = new Image();
+playerImage.src = "/net.png";
 
-// Creating the object box and random location function
+// Butterfly class creation and image assignment
+// Randomization of butterfly location
 
-class Treasure {
+class Butterfly {
   constructor() {
     this.x = Math.round(Math.random() * (canvas.width - 100));
     this.y = Math.round(Math.random() * (canvas.height - 100));
-    this.w = 15;
-    this.h = 15;
+    this.w = 40;
+    this.h = 40;
     this.color = "red";
   }
 }
 
-let treasure = new Treasure();
+let butterfly = new Butterfly();
+let butterflyImage = new Image();
+butterflyImage.src = "/butterfly.png";
 
-function spawnTreasure() {
-  treasure = new Treasure();
+function spawnButterfly() {
+  butterfly = new Butterfly();
 }
+
+// Bonus class creation and image assignment
 
 class Bonus {
   constructor() {
     this.x = Math.round(Math.random() * (canvas.width - 50));
-    this.y = -25;
-    this.w = 15;
-    this.h = 15;
-    this.color = "yellow";
+    this.y = 625;
+    this.w = 70;
+    this.h = 70;
   }
   moveDown() {
-    this.y = this.y + 1.5;
+    this.y = this.y - 3;
   }
 }
 
 let bonus = [];
+let bonusImage = new Image();
+bonusImage.src = "/gold.png";
 
 // Re-using event listener for movement
+// second listener for "key up"
 
 document.addEventListener("keydown", function (event) {
   switch (event.code) {
@@ -88,13 +95,14 @@ document.addEventListener("keydown", function (event) {
   }
 });
 
-// Timer, score, and bonuses for the game
+// Score, timer, and bonus interval for the game
+
 let timer = 30;
 let interval;
 let score = 0;
 let bonusInterval;
 
-// Detect collision formula - modified to move the treasure
+// Detect collision formula - modified to relocate the butterfly
 
 function detectCollision(player, obj) {
   if (
@@ -104,29 +112,41 @@ function detectCollision(player, obj) {
     player.y + player.h > obj.y
   ) {
     score += 1;
-    spawnTreasure();
+    spawnButterfly();
   }
   // } else {
   //   return false;
   // }
 }
 
-// Make a starting screen
+// Start screen with title and game instructions
+// Event listener on mouse click
 
 function startScreen() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
-  ctx.fillText("Canvas Game", canvas.width / 2, canvas.height / 2);
+  ctx.fillText("Collect the Butterflies", canvas.width / 2, canvas.height / 2);
   ctx.font = "20px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
-  ctx.fillText("Click to play", canvas.width / 2, canvas.height / 2 + 50);
+  ctx.fillText("Click to play", canvas.width / 2, canvas.height / 2 + 30);
+  ctx.fillText(
+    "Use arrow keys to move the net",
+    canvas.width / 2,
+    canvas.height / 2 + 75
+  );
+  ctx.fillStyle = "yellow";
+  ctx.fillText(
+    "Golden butterflies add bonus time",
+    canvas.width / 2,
+    canvas.height / 2 + 100
+  );
   document.addEventListener("click", startGame);
 }
+
+// Pre-animate function for intervals
 
 function startGame() {
   interval = setInterval(function () {
@@ -134,31 +154,17 @@ function startGame() {
   }, 1000);
   bonusInterval = setInterval(function () {
     bonus.push(new Bonus());
-  }, 20000);
+  }, 15000);
   document.removeEventListener("click", startGame);
   animate();
 }
-function gameOver() {
-  window.cancelAnimationFrame(animate);
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = "30px Arial";
-  ctx.textAlign = "center";
-  ctx.fillStyle = "white";
-  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
-  ctx.fillText(
-    `Final Score: ${score}`,
-    canvas.width / 2,
-    canvas.height / 2 + 50
-  );
-}
+
+// The main game animate function
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // Boundaries
+
+  // Check for edge boundaries
   if (player.y + player.w > canvas.height) {
     player.y = canvas.height - player.w;
   }
@@ -171,13 +177,12 @@ function animate() {
   if (player.x < 0) {
     player.x = 0;
   }
-  // End boundaries
 
-  // Bonus item interval
+  // Bonus item loop
   for (let i = 0; i < bonus.length; i++) {
     ctx.fillStyle = bonus[i].color;
     bonus[i].moveDown();
-    ctx.fillRect(bonus[i].x, bonus[i].y, bonus[i].w, bonus[i].h);
+    ctx.drawImage(bonusImage, bonus[i].x, bonus[i].y, bonus[i].w, bonus[i].h);
     if (
       player.x < bonus[i].x + bonus[i].w &&
       player.x + player.w > bonus[i].x &&
@@ -188,23 +193,49 @@ function animate() {
       bonus.splice(bonus[i]);
     }
   }
-  // Bonus item interval end
 
-  detectCollision(player, treasure);
-  ctx.fillStyle = player.color;
-  ctx.fillRect(player.x, player.y, player.w, player.w);
-  ctx.fillStyle = treasure.color;
-  ctx.fillRect(treasure.x, treasure.y, treasure.w, treasure.w);
+  // Collision function from outside animate
+  detectCollision(player, butterfly);
+
+  // Drawing player and butterflies to canvas
+  ctx.drawImage(playerImage, player.x, player.y, player.w, player.h);
+  ctx.drawImage(
+    butterflyImage,
+    butterfly.x,
+    butterfly.y,
+    butterfly.w,
+    butterfly.h
+  );
+
+  // Drawing timer and score at the top right
   ctx.fillStyle = "white";
   ctx.font = "20px Arial";
   ctx.textAlign = "right";
-  ctx.fillText(`Timer: ${timer}`, canvas.width - 20, 30);
-  ctx.fillText(`Score: ${score}`, canvas.width - 20, 50);
+  ctx.fillText(`Timer: ${timer}`, canvas.width - 35, 55);
+  ctx.fillText(`Score: ${score}`, canvas.width - 35, 75);
+
+  // Condition to end game or continue
   if (timer <= 0) {
     gameOver();
   } else {
     window.requestAnimationFrame(animate);
   }
+}
+
+// Game over screen with score results
+
+function gameOver() {
+  window.cancelAnimationFrame(animate);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "30px Arial";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
+  ctx.fillText(
+    `You caught ${score} butterflies`,
+    canvas.width / 2,
+    canvas.height / 2 + 50
+  );
 }
 
 startScreen();
