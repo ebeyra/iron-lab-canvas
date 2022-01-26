@@ -2,6 +2,17 @@
 function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+// Countdown and bonus butterfly intervals
+function timerCountdown() {
+  setInterval(function () {
+    timer--;
+  }, 1000);
+}
+function timerBonusButterfly() {
+  setInterval(function () {
+    bonus.push(new Bonus());
+  }, 15000);
+}
 // Butterfly collision check, moves butterfly to a new spawn point
 function detectCollision(net, butterfly) {
   if (
@@ -14,7 +25,7 @@ function detectCollision(net, butterfly) {
     butterfly.respawnButterfly();
   }
 }
-// Canvas edge collision check
+// Canvas edges collision check
 function canvasBoundaryCheck() {
   if (player.y + player.h > canvas.height) {
     player.y = canvas.height - player.h;
@@ -116,17 +127,6 @@ function displayTimerAndScore() {
   } else {
     window.requestAnimationFrame(animate);
   }
-}
-// Countdown and bonus butterfly intervals
-function timerCountdown() {
-  setInterval(function () {
-    timer--;
-  }, 1000);
-}
-function timerBonusButterfly() {
-  setInterval(function () {
-    bonus.push(new Bonus());
-  }, 15000);
 }
 // Game over screen with results
 function displayResults() {
