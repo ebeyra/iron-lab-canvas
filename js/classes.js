@@ -1,22 +1,27 @@
 // Controlled player class
 class Player {
   constructor() {
-    this.x = canvas.width / 2 - 20;
-    this.y = canvas.height / 2 - 20;
     this.w = 50;
     this.h = 55;
+    this.x = canvas.width / 2 - this.w;
+    this.y = canvas.height / 2 - this.h;
+    this.up = false;
+    this.down = false;
+    this.left = false;
+    this.right = false;
+    this.score = 0;
   }
   movement() {
-    if (up) {
+    if (this.up) {
       player.y -= 3;
     }
-    if (down) {
+    if (this.down) {
       player.y += 3;
     }
-    if (left) {
+    if (this.left) {
       player.x -= 3;
     }
-    if (right) {
+    if (this.right) {
       player.x += 3;
     }
   }

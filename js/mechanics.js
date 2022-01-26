@@ -21,7 +21,7 @@ function detectCollision(net, butterfly) {
     net.y < butterfly.y + butterfly.h &&
     net.y + net.h > butterfly.y
   ) {
-    score += 1;
+    net.score += 1;
     butterfly.respawnButterfly();
   }
 }
@@ -41,39 +41,35 @@ function canvasBoundaryCheck() {
   }
 }
 // Directional conditions and event listeners for smooth movement
-let up = false;
-let down = false;
-let left = false;
-let right = false;
 document.addEventListener("keydown", function (event) {
   switch (event.key) {
     case "ArrowUp":
-      up = true;
+      player.up = true;
       break;
     case "ArrowDown":
-      down = true;
+      player.down = true;
       break;
     case "ArrowLeft":
-      left = true;
+      player.left = true;
       break;
     case "ArrowRight":
-      right = true;
+      player.right = true;
       break;
   }
 });
 document.addEventListener("keyup", function (event) {
   switch (event.key) {
     case "ArrowUp":
-      up = false;
+      player.up = false;
       break;
     case "ArrowDown":
-      down = false;
+      player.down = false;
       break;
     case "ArrowLeft":
-      left = false;
+      player.left = false;
       break;
     case "ArrowRight":
-      right = false;
+      player.right = false;
       break;
   }
 });
@@ -121,7 +117,7 @@ function displayTimerAndScore() {
   ctx.font = "20px Arial";
   ctx.textAlign = "right";
   ctx.fillText(`Timer: ${timer}`, canvas.width - 35, 55);
-  ctx.fillText(`Collected: ${score}`, canvas.width - 35, 75);
+  ctx.fillText(`Collected: ${player.score}`, canvas.width - 35, 75);
   if (timer <= 0) {
     gameOver();
   } else {
@@ -135,7 +131,7 @@ function displayResults() {
   ctx.fillStyle = "white";
   ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
   ctx.fillText(
-    `You caught ${score} butterflies`,
+    `You caught ${player.score} butterflies`,
     canvas.width / 2,
     canvas.height / 2 + 50
   );

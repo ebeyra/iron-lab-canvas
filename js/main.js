@@ -7,7 +7,6 @@ let player = new Player();
 let target = new Butterfly();
 let bonus = [];
 let timer = 30;
-let score = 0;
 
 // Starting screen with instructions
 
@@ -31,9 +30,9 @@ function animate() {
   player.movement();
   target.drawButterfly();
   detectCollision(player, target);
-  canvasBoundaryCheck();
   bonusButterflyEvent();
   displayTimerAndScore();
+  canvasBoundaryCheck();
 }
 
 // Game over screen with score results
