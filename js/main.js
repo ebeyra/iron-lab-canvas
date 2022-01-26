@@ -8,23 +8,17 @@ let target = new Butterfly();
 let bonus = [];
 let timer = 30;
 let score = 0;
-let countdown;
-let bonusInterval;
 
-// Start screen with instructions
+// Starting screen with instructions
 
 function startScreen() {
   clearCanvas();
-  howToPlayIntro();
+  howToPlay();
   document.addEventListener("click", startGame);
 }
 function startGame() {
-  countdown = setInterval(function () {
-    timer--;
-  }, 1000);
-  bonusInterval = setInterval(function () {
-    bonus.push(new Bonus());
-  }, 15000);
+  timerCountdown();
+  timerBonusButterfly();
   document.removeEventListener("click", startGame);
   animate();
 }
@@ -34,12 +28,12 @@ function startGame() {
 function animate() {
   clearCanvas();
   player.drawPlayer();
-  player.move();
+  player.movement();
   target.drawButterfly();
   detectCollision(player, target);
   canvasBoundaryCheck();
-  bonusEvent();
-  timerAndScore();
+  bonusButterflyEvent();
+  displayTimerAndScore();
 }
 
 // Game over screen with score results
@@ -47,7 +41,7 @@ function animate() {
 function gameOver() {
   window.cancelAnimationFrame(animate);
   clearCanvas();
-  postResults();
+  displayResults();
 }
 
 startScreen();

@@ -1,19 +1,23 @@
+// Wipe canvas clean
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 // Butterfly collision check, moves butterfly to a new spawn point
-function detectCollision(player, obj) {
+function detectCollision(net, butterfly) {
   if (
-    player.x < obj.x + obj.w &&
-    player.x + player.w > obj.x &&
-    player.y < obj.y + obj.h &&
-    player.y + player.h > obj.y
+    net.x < butterfly.x + butterfly.w &&
+    net.x + net.w > butterfly.x &&
+    net.y < butterfly.y + butterfly.h &&
+    net.y + net.h > butterfly.y
   ) {
     score += 1;
-    target.newButterfly();
+    butterfly.respawnButterfly();
   }
 }
 // Canvas edge collision check
 function canvasBoundaryCheck() {
-  if (player.y + player.w > canvas.height) {
-    player.y = canvas.height - player.w;
+  if (player.y + player.h > canvas.height) {
+    player.y = canvas.height - player.h;
   }
   if (player.y < 0) {
     player.y = 0;
@@ -63,7 +67,7 @@ document.addEventListener("keyup", function (event) {
   }
 });
 // Bonus butterfly event, adds extra time if caught
-function bonusEvent() {
+function bonusButterflyEvent() {
   for (let i = 0; i < bonus.length; i++) {
     bonus[i].drawGoldenButterfly();
     bonus[i].flyAcross();
@@ -79,7 +83,7 @@ function bonusEvent() {
   }
 }
 // Intro screen with instructions
-function howToPlayIntro() {
+function howToPlay() {
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
@@ -100,21 +104,32 @@ function howToPlayIntro() {
     canvas.height / 2 + 100
   );
 }
-// Countdown timer and score on canvas
-function timerAndScore() {
+// Timekeep and scorekeep on upper right corner
+function displayTimerAndScore() {
   ctx.fillStyle = "white";
   ctx.font = "20px Arial";
   ctx.textAlign = "right";
   ctx.fillText(`Timer: ${timer}`, canvas.width - 35, 55);
-  ctx.fillText(`Score: ${score}`, canvas.width - 35, 75);
+  ctx.fillText(`Collected: ${score}`, canvas.width - 35, 75);
   if (timer <= 0) {
     gameOver();
   } else {
     window.requestAnimationFrame(animate);
   }
 }
+// Countdown and bonus butterfly intervals
+function timerCountdown() {
+  setInterval(function () {
+    timer--;
+  }, 1000);
+}
+function timerBonusButterfly() {
+  setInterval(function () {
+    bonus.push(new Bonus());
+  }, 15000);
+}
 // Game over screen with results
-function postResults() {
+function displayResults() {
   ctx.font = "30px Arial";
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
@@ -124,8 +139,4 @@ function postResults() {
     canvas.width / 2,
     canvas.height / 2 + 50
   );
-}
-// Wipe canvas clean
-function clearCanvas() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
