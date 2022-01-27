@@ -27,7 +27,7 @@ class Player {
   }
   drawPlayer() {
     let playerImage = new Image();
-    playerImage.src = "images/net.png";
+    playerImage.src = "./images/net.png";
     playerImage.onload = () => {
       ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
     };
@@ -44,7 +44,7 @@ class Butterfly {
   }
   drawButterfly() {
     let butterflyImage = new Image();
-    butterflyImage.src = "images/butterfly.png";
+    butterflyImage.src = "./images/butterfly.png";
     butterflyImage.onload = () => {
       ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
     };
@@ -64,7 +64,7 @@ class Bonus {
   }
   drawGoldenButterfly() {
     let bonusImage = new Image();
-    bonusImage.src = "images/gold.png";
+    bonusImage.src = "./images/gold.png";
     bonusImage.onload = () => {
       ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
     };
