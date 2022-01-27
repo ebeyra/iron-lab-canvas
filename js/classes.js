@@ -1,4 +1,23 @@
 // Controlled player class
+
+let playerImage = new Image();
+playerImage.src = "images/net.png";
+playerImage.onload = () => {
+  ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
+};
+
+let butterflyImage = new Image();
+butterflyImage.src = "images/butterfly.png";
+butterflyImage.onload = () => {
+  ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
+};
+
+let bonusImage = new Image();
+bonusImage.src = "images/gold.png";
+bonusImage.onload = () => {
+  ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
+};
+
 class Player {
   constructor() {
     this.w = 50;
@@ -26,12 +45,7 @@ class Player {
     }
   }
   drawPlayer() {
-    let playerImage = new Image();
-    playerImage.src = "./images/net.png";
-    playerImage.onload = () => {
-      ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
-    };
-    // ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
+    ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
   }
 }
 // Target butterfly class
@@ -43,12 +57,7 @@ class Butterfly {
     this.h = 25;
   }
   drawButterfly() {
-    let butterflyImage = new Image();
-    butterflyImage.src = "./images/butterfly.png";
-    butterflyImage.onload = () => {
-      ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
-    };
-    // ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
+    ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
   }
   respawnButterfly() {
     target = new Butterfly();
@@ -63,12 +72,7 @@ class Bonus {
     this.h = 25;
   }
   drawGoldenButterfly() {
-    let bonusImage = new Image();
-    bonusImage.src = "./images/gold.png";
-    bonusImage.onload = () => {
-      ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
-    };
-    // ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
+    ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
   }
   flyAcross() {
     this.y = this.y - 3;
