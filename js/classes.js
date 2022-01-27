@@ -28,9 +28,8 @@ class Player {
   drawPlayer() {
     let playerImage = new Image();
     playerImage.src = "images/net.png";
-    playerImage.onload = () => {
-      ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
-    };
+    playerImage.onload = () => {};
+    ctx.drawImage(playerImage, this.x, this.y, this.w, this.h);
   }
 }
 // Target butterfly class
@@ -44,9 +43,8 @@ class Butterfly {
   drawButterfly() {
     let butterflyImage = new Image();
     butterflyImage.src = "images/butterfly.png";
-    butterflyImage.onload = () => {
-      ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
-    };
+    butterflyImage.onload = () => {};
+    ctx.drawImage(butterflyImage, this.x, this.y, this.w, this.h);
   }
   respawnButterfly() {
     target = new Butterfly();
@@ -63,9 +61,8 @@ class Bonus {
   drawGoldenButterfly() {
     let bonusImage = new Image();
     bonusImage.src = "images/gold.png";
-    bonusImage.onload = () => {
-      ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
-    };
+    bonusImage.onload = () => {};
+    ctx.drawImage(bonusImage, this.x, this.y, this.w, this.h);
   }
   flyAcross() {
     this.y = this.y - 3;
